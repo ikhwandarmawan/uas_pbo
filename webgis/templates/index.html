@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+{% load static %}
+  <section class="min-h-screen bg-slate-100 pb-10">
+    <div class="h-screen flex pt-10 flex-col justify-center items-center">
+        <h1 class="pb-4 text-xl ">Peta (Resize peta di ujung kanan bawah)</h1>
+        <div style="resize: both;" id="map" class="w-[80%] md:w-[70%] h-[60%] rounded-md brightness-[.9] relative z-10"></div>
+    </div>
+    <div class="pb-10">
+        <h1 data-aos="fade-down" class="text-center md:text-4xl text-2xl font-semibold">Detail Data</h1>
+        <div data-aos="flip-left" class="w-[90%] pt-4 overflow-x-auto mx-auto">
+            <table id="datalokasi" class="w-full">
+                <thead>
+                    <tr class="[&>*]:py-2 [&>*]:px-4 bg-emerald-600 text-white">
+                        <th>Tanggal Mulai</th>
+                        <th>Tanggal Selesai</th>
+                        <th>Wilayah</th>
+                        <th>Koordinat</th>
+                        <th>Kedalaman</th>
+                        <th>Keterangan</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for peta in petas %} 
+                        <tr class="[&>*]:py-2 [&>*]:px-4 odd:bg-emerald-100 even:bg-emerald-200">
+                            <td>{{peta.tanggal_mulai}}</td>
+                            <td>{{peta.tanggal_selesai}}</td>
+                            <td>{{peta.wilayah}}</td>
+                            <td>{{peta.garis_lintang}}, {{peta.garis_bujur}}</td>
+                            <td>{{peta.ketinggian}} cm</td>
+                            <td>{{peta.deskripsi}}</td>
+                            {% if user.is_authenticated %}
+                            <td>
+                                <button class="rounded-md bg-green-600 mb-2 text-white px-4 py-2 inline-block">Lihat Detail</button>
+                                <a href="{% url 'editpeta' peta.id %}" class="rounded-md bg-yellow-600 mb-2 text-white px-4 py-2 inline-block">Edit</a>
+                                <a onclick="return confirm(`Apakah Anda yakin ingin menghapus data wilayah {{peta.wilayah}}`)" href="{% url 'hapuspeta' peta.id %}" class="rounded-md bg-red-600 mt-2 text-white px-4 py-2 inline-block">Remove</a>
+                            </td>
+                            {% else %}
+                            <td>
+                                <button class="rounded-md bg-green-600 mb-2 text-white px-4 py-2 inline-block">Lihat Detail</button>
+                            </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div>
+        <h3 class="text-center md:text-4xl text-2xl font-semibold">Tips Menghadapi Banjir</h3>
+        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_8lqexrip.json" background="transparent" data-aos="fade-up" speed="1" class="w-[30%] mx-auto my-4" loop autoplay></lottie-player>
+        
+        {% if user.is_authenticated %}
+        <a href="{% url 'tambahtips' %}" class="rounded-md bg-green-600 mb-2 text-white px-4 py-2 inline-block mx-6 md:mx-8">Tambah Tips</a>
+        {% endif %}
+        
+        <div class="flex flex-wrap justify-center gap-10 px-6 md:px-8">
+            {% for tips in tipss  %}
+            <div class="block max-w-sm p-6 hover:bg-gradient-to-tl bg-gradient-to-br from-green-700 to-emerald-500 via-emerald-600 text-white border border-gray-200 rounded-lg shadow-md hover:bg-gray-100">
+                <h5 class="mb-2 text-2xl font-bold tracking-tight dark:text-white">{{tips.judul}}</h5>
+                <p class="font-normal  dark:text-gray-400 mb-4">{{tips.deskripsi|truncatewords:5}}</p>
+                <button onclick="detailTips(`{{tips.judul}}`, `{{tips.deskripsi}}`)" class="rounded-md bg-blue-600 mb-2 text-white px-4 py-2 inline-block">Lihat Detail</button>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'edittips' tips.id %}" class="rounded-md bg-yellow-600 mb-2 text-white px-4 py-2 inline-block">Edit</a>
+                    <a onclick="return confirm(`Apakah Anda yakin ingin menghapus tips {{tips.judul}}`)" href="{% url 'hapustips' tips.id %}" class="rounded-md bg-red-600 mt-2 text-white px-4 py-2 inline-block">Remove</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+  </section>
+
+
+
+<script type="text/javascript">
+    var data_peta = JSON.parse("{{data_peta|escapejs}}");
+    var map = L.map('map', {
+        scrollWheelZoom : false,
+    }).setView([-6.117597, 106.823922], 11);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 12,
+        minZoom: 9,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    data_peta.map(e =>{
+        L.marker([e.fields.garis_lintang, e.fields.garis_bujur]).addTo(map).bindPopup(`Mulai banjir : ${e.fields.tanggal_mulai} <br>Selesai/Surut ${e.fields.tanggal_selesai} <br><br>Wilayah: ${e.fields.wilayah}`)
+    })
+
+    const detailTips = (j,d) =>{
+        swal(`Tips Menghadapi Banjir : ${j}`, `${d}`)
+    }
+
+    $(document).ready(function () {
+        $('#datalokasi').DataTable({
+            lengthMenu: [
+            [7, 14, 25, 35, -1],
+            [7, 14, 25, 35, 'All'],
+        ],
+        });
+    });
+</script>
+{% endblock  %}

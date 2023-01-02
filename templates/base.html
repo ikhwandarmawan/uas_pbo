@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <title></title>
+    <style>
+        #datalokasi_length{
+            margin-bottom: 10px;
+            float: none;
+            text-align: left;
+        }
+        #datalokasi_length label select{
+            border: 1px solid #24f98b;
+        }
+        #datalokasi_length label select:focus{
+            outline: none;
+            border: 1px solid #059669;
+        }
+        div #datalokasi_paginate{
+            float: none;
+            margin-right: auto;
+            text-align: left;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+        div #datalokasi_paginate .paginate_button.previous{
+            margin-left: 0px;   
+            padding-left: 0px;   
+        }
+        div #datalokasi_info{
+            float: none;
+            text-align: left;
+        }
+        div #datalokasi_filter{
+            float: none;
+            text-align: left;
+            margin-bottom: 10px;
+            display: block;
+        }
+        div #datalokasi_filter label input{
+            border: 1px solid #24f98b;
+        }
+        div #datalokasi_filter label input:focus{
+            outline: none;
+            border: 1px solid #059669;
+        }
+    </style>
+</head>
+<body>
+    {% block content %}
+    {% endblock  %}
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
+</body>
+</html>
